@@ -4,7 +4,7 @@ WORKDIR /go/src/packages-api
 
 COPY . .
 
-RUN go build -o packages-api ./main.go
+RUN go build -o packages-api
 
 EXPOSE 8080
 
