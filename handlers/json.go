@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"packages-api/cache"
+	c "packages-api/cache"
 	g "packages-api/internal"
 )
 
@@ -16,7 +16,8 @@ func HandleJSONData(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "branch and arch are required", http.StatusBadRequest)
 		return
 	}
-	if val, ok := cache.Get(branch + arch); ok {
+
+	if val, ok := c.Get(branch + arch); ok {
 		jsonBytes, err := json.MarshalIndent(val, "", "\t")
 		if err != nil {
 			http.Error(w, "Error marshalling json: "+err.Error(), http.StatusInternalServerError)
@@ -26,6 +27,7 @@ func HandleJSONData(w http.ResponseWriter, r *http.Request) {
 		w.Write(jsonBytes)
 		return
 	}
+
 	fileName := "json/packages/" + branch + "/" + arch + "/" + arch + ".json"
 	jsonData, err := g.GetJSONData(fileName)
 	if err != nil {
@@ -35,13 +37,15 @@ func HandleJSONData(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	cache.Set(branch+arch, jsonData)
+
+	c.Set(branch+arch, jsonData)
 	jsonBytes, err := json.MarshalIndent(jsonData, "", "\t")
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Error marshalling json: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonBytes)
 }
