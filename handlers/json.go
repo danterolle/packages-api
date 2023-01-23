@@ -7,7 +7,11 @@ import (
 )
 
 func HandleJSONData(w http.ResponseWriter, r *http.Request) {
-	fileName := "json/packages/contrib/amd64/amd64.json"
+	vars := r.URL.Query()
+	branch := vars.Get("branch")
+	arch := vars.Get("arch")
+	fileName := "json/packages/" + branch + "/" + arch + "/" + arch + ".json"
+
 	jsonData, err := g.GetJSONData(fileName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
