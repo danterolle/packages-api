@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	g "packages-api/internal"
+	"packages-api/models"
 	"packages-api/utils"
 	"packages-api/utils/cache"
 	"path/filepath"
@@ -39,6 +41,15 @@ func HandleJSONData(w http.ResponseWriter, r *http.Request) {
 	// Sanitize the "branch" and "arch" variables
 	branch = utils.SanitizeInput(branch)
 	arch = utils.SanitizeInput(arch)
+
+	if !utils.CheckWhitelist(branch, models.Branch) {
+		fmt.Println("Invalid branch")
+		return
+	}
+	if !utils.CheckWhitelist(arch, models.Arch) {
+		fmt.Println("Invalid architecture")
+		return
+	}
 
 	// Construct the file name
 	fileName := filepath.Join("json", "packages", branch, arch, arch+".json")

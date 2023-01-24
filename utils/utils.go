@@ -25,3 +25,16 @@ func SanitizeInput(input string) string {
 
 	return input
 }
+
+// CheckWhitelist it is used for checking if a given input string is present in both Branch and Arch constants
+func CheckWhitelist(input string, whitelist []string) bool {
+	// Iterate over the whitelist values (check constants.go to see the values allowed)
+	for _, value := range whitelist {
+		// Check if the input value is equal to the current whitelist value
+		if input == value {
+			return true
+		}
+	}
+	// If the input value is not found in the whitelist, return false
+	return false
+}

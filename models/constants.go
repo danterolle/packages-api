@@ -1,12 +1,12 @@
 package models
 
-var Branch = [3]string{
+var Branch = []string{
 	"contrib",
 	"main",
 	"non-free",
 }
 
-var Arch = [4]string{
+var Arch = []string{
 	"amd64",
 	"arm64",
 	"armhf",
