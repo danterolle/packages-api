@@ -11,13 +11,13 @@ import (
 	"path/filepath"
 )
 
-func HandleSinglePackage(w http.ResponseWriter, r *http.Request) {
+func GetPackage(w http.ResponseWriter, r *http.Request) {
 	vars := r.URL.Query()
 	branch := vars.Get("branch")
 	arch := vars.Get("arch")
 	packageName := vars.Get("package")
-	if branch == "" || arch == "" {
-		http.Error(w, "branch and arch are required", http.StatusBadRequest)
+	if branch == "" || arch == "" || packageName == "" {
+		http.Error(w, "branch, architecture and package name are required", http.StatusBadRequest)
 		return
 	}
 
@@ -50,7 +50,6 @@ func HandleSinglePackage(w http.ResponseWriter, r *http.Request) {
 			packageData = p
 			break
 		}
-
 	}
 
 	jsonBytes, err := json.MarshalIndent(packageData, "", "\t")
