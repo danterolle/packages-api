@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"packages-api/internal"
@@ -26,11 +26,11 @@ func GetPackage(w http.ResponseWriter, r *http.Request) {
 	packageName = utils.SanitizeInput(packageName)
 
 	if !utils.CheckAllowlist(branch, models.Branch) {
-		fmt.Println("Invalid branch")
+		log.Println("Invalid branch")
 		return
 	}
 	if !utils.CheckAllowlist(arch, models.Arch) {
-		fmt.Println("Invalid architecture")
+		log.Println("Invalid architecture")
 		return
 	}
 
@@ -52,13 +52,17 @@ func GetPackage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	jsonBytes, err := json.MarshalIndent(packageData, "", "\t")
+	jsonBytes := &bytes.Buffer{}
+	jsonEncoder := json.NewEncoder(jsonBytes)
+	jsonEncoder.SetIndent("", "  ")
+
+	err = jsonEncoder.Encode(packageData)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "Error marshalling json: "+err.Error(), http.StatusInternalServerError)
+		log.Printf("Error marshalling json: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonBytes)
+	w.Write(jsonBytes.Bytes())
 }
