@@ -17,7 +17,7 @@ func SanitizeInput(input string) string {
 	input = strings.TrimSpace(input)
 
 	// Remove any non-alphanumeric characters
-	reg, _ := regexp.Compile("[^a-zA-Z0-9]+")
+	reg := regexp.MustCompile(`^[\p{Ll}\p{Lu}\p{Nd}_-]+$`)
 	input = reg.ReplaceAllString(input, "")
 
 	// Convert input to lowercase
@@ -27,7 +27,7 @@ func SanitizeInput(input string) string {
 }
 
 // CheckWhitelist it is used for checking if a given input string is present in both Branch and Arch constants
-func CheckWhitelist(input string, whitelist []string) bool {
+func CheckAllowlist(input string, whitelist []string) bool {
 	// Iterate over the whitelist values (check constants.go to see the values allowed)
 	for _, value := range whitelist {
 		// Check if the input value is equal to the current whitelist value
